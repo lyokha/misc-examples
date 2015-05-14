@@ -47,8 +47,6 @@ bool  find( const std::vector< std::string > &  p, const std::string &  s,
     std::size_t  pos( 0 );
     std::string  snorm( col.transform( level, s ) ); 
 
-    /* BEWARE: col.transform() puts accessible null character at the end of
-     * a normalized string: that's why we will subtract 1 in ssize and psize */
     std::size_t  ssize( snorm.size() - 1 );
     std::size_t  len( ssize );
 
@@ -109,7 +107,7 @@ bool  find_icu( const std::vector< std::string > &  p, const std::string &  s,
 int  main( void )
 {
     std::string  a( "Семён зна́ет" );
-    std::string  b( "Семен знает" );
+    std::string  b( "семен знает" );
 
     bool  eq( col.compare( collator_base::primary, a, b ) == 0 );
 
