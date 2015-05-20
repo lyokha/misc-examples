@@ -97,7 +97,7 @@ bool  find_icu( const std::vector< std::string > &  p, const std::string &  s,
         if ( scur_pos == USEARCH_DONE )
             return false;
 
-        pos += scur_pos + pu.length();
+        pos += scur_pos + it.getMatchedLength();
     }
 
     return true;
