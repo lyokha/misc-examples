@@ -117,7 +117,7 @@ theGraph = [(24,25),(25,449),(36,37),(37,46),(46,47),(47,51),(51,52),(52,54),
 deredundancify :: [Edge] -> IO ([Vertex], [Edge])
 deredundancify es = do
     let vs = map head . group . sort $ foldr (\(a, b) c -> a : b : c) [] es
-    m  <- liftM M.fromList $ mapM (\v -> do p <- fresh v; return (v, p)) vs
+    m  <- liftM M.fromList $ mapM (runKleisli $ arr id &&& Kleisli fresh) vs
     let testNotCycle e = do
             let ve = both (fromJust . (`M.lookup` m)) e
             notCycle <- uncurry (liftM2 (/=)) $ both descriptor ve
