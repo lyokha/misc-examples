@@ -119,7 +119,7 @@ deredundancify es = do
     let vs = map head . group . sort $ foldr (\(a, b) c -> a : b : c) [] es
     m  <- liftM M.fromList $ mapM (\v -> do p <- fresh v; return (v, p)) vs
     let testNotCycle e = do
-            let ve = both (`M.lookup` m) >>> both fromJust $ e
+            let ve = both (fromJust . (`M.lookup` m)) e
             notCycle <- uncurry (liftM2 (/=)) $ both descriptor ve
             when notCycle $ uncurry union ve
             return notCycle
