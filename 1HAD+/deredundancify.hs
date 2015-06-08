@@ -18,7 +18,8 @@
 --
 -- To render edges without arrows use option -l
 
-import            Control.Monad               (liftM, filterM)
+import            Control.Monad
+import            Control.Arrow
 import            Data.List                   (sort, group)
 import qualified  Data.Map                    as M
 import            Data.UnionFind.IO
@@ -116,18 +117,13 @@ theGraph = [(24,25),(25,449),(36,37),(37,46),(46,47),(47,51),(51,52),(52,54),
 deredundancify :: [Edge] -> IO ([Vertex], [Edge])
 deredundancify es = do
     let vs = map head . group . sort $ foldr (\(a, b) c -> a : b : c) [] es
-    ps <- mapM fresh vs
-    m  <- liftM M.fromList $ mapM (\a -> do b <- descriptor a; return (b, a)) ps
-    let testNotCycle (a, b) = do
-            let pa = fromJust $ M.lookup a m
-            let pb = fromJust $ M.lookup b m
-            da <- descriptor pa
-            db <- descriptor pb
-            if da == db
-                then return False
-                else do
-                    pa `union` pb
-                    return True
+    m  <- liftM M.fromList $ mapM (\v -> do p <- fresh v; return (v, p)) vs
+    let testNotCycle e = do
+            let ve = both (`M.lookup` m) >>> both fromJust $ e
+            notCycle <- uncurry (liftM2 (/=)) $ both descriptor ve
+            when notCycle $ uncurry union ve
+            return notCycle
+            where both = join (***)
     rs <- filterM testNotCycle es
     return (vs, rs)
 
