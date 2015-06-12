@@ -18,6 +18,8 @@
 --
 -- To render edges without arrows use option -l
 
+{-# LANGUAGE TupleSections #-}
+
 import            Control.Monad
 import            Control.Arrow
 import            Data.List                   (sort, group)
@@ -129,8 +131,8 @@ deredundancify es = do
 
 mkDot :: [Vertex] -> [Edge] -> [GlobalAttributes] -> DotGraph Node
 mkDot vs es attrs =
-    let lvs = map (\a -> (a, pack $ show a)) vs
-        les = map (\(a, b) -> (a, b, ())) es
+    let lvs = map (id &&& pack . show) vs
+        les = map (uncurry (,, ())) es
         gr  = mkGraph lvs les :: Gr Text ()
     in graphToDot nonClusteredParams {globalAttributes = attrs} gr
 
