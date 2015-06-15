@@ -121,7 +121,7 @@ deredundancify es = do
     let vs = map head . group . sort $ foldr (\(a, b) c -> a : b : c) [] es
     m  <- liftM M.fromList $ mapM (runKleisli $ arr id &&& Kleisli fresh) vs
     let testNotCycle e = do
-            let ve = both (fromJust . (`M.lookup` m)) e
+            let ve = both (fromJust . flip M.lookup m) e
             notCycle <- uncurry (liftM2 (/=)) $ both descriptor ve
             when notCycle $ uncurry union ve
             return notCycle
