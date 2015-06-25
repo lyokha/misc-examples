@@ -1,0 +1,41 @@
+<?xml version="1.0"?>
+<!DOCTYPE tsung SYSTEM "/usr/local/share/tsung/tsung-1.0.dtd" [] >
+<tsung loglevel="info">
+  <clients>
+    <!--<client maxusers="512" host="localhost" cpu="4"/>-->
+    <client host="localhost" use_controller_vm="true"/>
+  </clients>
+
+  <servers>
+    <server host="192.168.0.2" port="5555" type="tcp"></server>
+  </servers>
+
+  <load>
+    <arrivalphase phase="1" duration="60" unit="second">
+      <users arrivalrate="2" unit="second"></users>
+    </arrivalphase>
+    <arrivalphase phase="2" duration="60" unit="second">
+      <users arrivalrate="4" unit="second"></users>
+    </arrivalphase>
+  </load>
+
+  <sessions>
+    <session name="md5hex_1" probability="50" type="ts_p_md5hex">
+      <request>
+        <match do='continue' when='match' apply_to_content='ts_p_md5hex:md5hex'>
+          827ccb0eea8a706c4c34a16891f84e7b
+        </match>
+        <p_md5hex value="12345"/>
+      </request>
+    </session>
+    <session name="md5hex_2" probability="50" type="ts_p_md5hex">
+      <request>
+        <match do='continue' when='match' apply_to_content='ts_p_md5hex:md5hex'>
+          1e01ba3e07ac48cbdab2d3284d1dd0fa
+        </match>
+        <p_md5hex value="67890"/>
+      </request>
+    </session>
+  </sessions>
+</tsung>
+
