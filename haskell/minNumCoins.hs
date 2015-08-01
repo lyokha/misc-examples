@@ -3,7 +3,7 @@
 
 import           Data.Function.Memoize       (memoFix2)
 import           Data.IntMap.Strict          (singleton, insert, split, (!))
-import           Data.List                   (mapAccumL, sortBy)
+import           Data.List                   (mapAccumL, sortBy, delete)
 import           Data.Array.IO
 import           Data.Array.Base             (unsafeRead, unsafeWrite)
 import           Control.Monad               (foldM, foldM_, liftM)
@@ -84,7 +84,7 @@ minNumCoinsVectorBasic c m = do
 main = do
     args <- getArgs
     if benchArg `elem` args
-        then withArgs (filter (/= benchArg) args) $ defaultMain
+        then withArgs (delete benchArg args) $ defaultMain
              [
                  bench ("map " ++ show m2)          $ whnf
                      (minNumCoinsMap        coins) m2,
