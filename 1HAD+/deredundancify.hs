@@ -16,22 +16,23 @@
 --
 --   ./deredundancify | dot -Tpng > deredundancified.png
 --
--- To render edges without arrows use option -l
+--  Use options -l to render edges without arrows and -t to render tiny graphs
 
 {-# LANGUAGE TupleSections #-}
 
 import            Control.Monad
 import            Control.Arrow
-import            Data.List                   (sort, group)
-import qualified  Data.Map                    as M
+import            Data.List                          (sort, group)
+import qualified  Data.Map                           as M
 import            Data.UnionFind.IO
-import            Data.Maybe                  (fromJust)
-import            Data.Graph.Inductive        hiding (Edge)
+import            Data.Maybe                         (fromJust)
+import            Data.Graph.Inductive               hiding (Edge)
 import            Data.GraphViz
-import            Data.GraphViz.Attributes
-import            Data.GraphViz.Printing      (renderDot)
-import            Data.Text.Lazy              (Text, unpack, pack)
-import            System.Environment          (getArgs)
+import            Data.GraphViz.Attributes.Complete
+import            Data.GraphViz.Printing             (renderDot)
+import            Data.Colour
+import            Data.Text.Lazy                     (Text, unpack, pack)
+import            System.Environment                 (getArgs)
 
 type Vertex = Int
 type Edge   = (Int, Int)
@@ -139,8 +140,23 @@ mkDot vs es attrs =
 main = do
     args     <- getArgs
     (vs, rs) <- deredundancify theGraph
-    let attrs = [EdgeAttrs
-                    [edgeEnds $ if "-l" `elem` args then NoDir else Forward]]
-        dot   = mkDot vs (if "-o" `elem` args then theGraph else rs) attrs
+    let originalGraph   = "-o" `elem` args
+        tinyGraph       = "-t" `elem` args
+        noArrows        = "-l" `elem` args
+        ecolor          = [toWC $ fromAColour $
+                           dissolve 0.3 $ fromJust $ toColour $ X11Color Blue]
+        ncolor          = [toWC $ fromAColour $
+                           dissolve 0.5 $ fromJust $ toColour $ X11Color Red]
+        eattrs
+            | tinyGraph = [edgeEnds NoDir, Color ecolor]
+            | otherwise = [edgeEnds $ if noArrows then NoDir else Forward]
+        nattrs
+            | tinyGraph = [Shape PointShape, Width 0.04, Color ncolor]
+            | otherwise = []
+        gattrs
+            | tinyGraph = [Size $ GSize 10 Nothing True]
+            | otherwise = []
+        attrs = [EdgeAttrs eattrs, NodeAttrs nattrs, GraphAttrs gattrs]
+        dot   = mkDot vs (if originalGraph then theGraph else rs) attrs
     putStrLn $ unpack $ renderDot $ toDot dot
 
