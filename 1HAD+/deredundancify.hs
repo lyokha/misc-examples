@@ -22,17 +22,18 @@
 
 import            Control.Monad
 import            Control.Arrow
-import            Data.List                          (sort, group)
-import qualified  Data.Map                           as M
+import            Data.List                            (sort, group)
+import qualified  Data.Map                             as M
 import            Data.UnionFind.IO
-import            Data.Maybe                         (fromJust)
-import            Data.Graph.Inductive               hiding (Edge)
+import            Data.Maybe                           (fromJust)
+import            Data.Graph.Inductive                 hiding (Edge)
 import            Data.GraphViz
 import            Data.GraphViz.Attributes.Complete
-import            Data.GraphViz.Printing             (renderDot)
-import            Data.Colour
-import            Data.Text.Lazy                     (Text, unpack, pack)
-import            System.Environment                 (getArgs)
+import            Data.GraphViz.Attributes.Colors.X11
+import            Data.GraphViz.Printing               (renderDot)
+import            Data.Colour                          (dissolve)
+import            Data.Text.Lazy                       (Text, unpack, pack)
+import            System.Environment                   (getArgs)
 
 type Vertex = Int
 type Edge   = (Int, Int)
@@ -143,9 +144,9 @@ main = do
     let originalGraph   = "-o" `elem` args
         tinyGraph       = "-t" `elem` args
         noArrows        = "-l" `elem` args
-        tColor f        = toWC . fromAColour . dissolve f . fromJust . toColour
-        ecolor          = [tColor 0.3 $ X11Color Blue]
-        ncolor          = [tColor 0.5 $ X11Color Red]
+        withOpacity     = ((toWC .) fromAColour .) . flip dissolve . x11Colour
+        ecolor          = [Blue `withOpacity` 0.3]
+        ncolor          = [Red  `withOpacity` 0.5]
         eattrs
             | tinyGraph = [edgeEnds NoDir, Color ecolor]
             | otherwise = [edgeEnds $ if noArrows then NoDir else Forward]
