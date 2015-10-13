@@ -143,10 +143,9 @@ main = do
     let originalGraph   = "-o" `elem` args
         tinyGraph       = "-t" `elem` args
         noArrows        = "-l" `elem` args
-        ecolor          = [toWC $ fromAColour $
-                           dissolve 0.3 $ fromJust $ toColour $ X11Color Blue]
-        ncolor          = [toWC $ fromAColour $
-                           dissolve 0.5 $ fromJust $ toColour $ X11Color Red]
+        tColor f        = toWC . fromAColour . dissolve f . fromJust . toColour
+        ecolor          = [tColor 0.3 $ X11Color Blue]
+        ncolor          = [tColor 0.5 $ X11Color Red]
         eattrs
             | tinyGraph = [edgeEnds NoDir, Color ecolor]
             | otherwise = [edgeEnds $ if noArrows then NoDir else Forward]
