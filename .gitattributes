@@ -1,0 +1,4 @@
+*.x     linguist-language=Lex
+*.m     linguist-language=Matlab
+*.dat   linguist-detectable=false
+
