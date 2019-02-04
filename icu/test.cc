@@ -45,7 +45,7 @@ bool  find( const std::vector< std::string > &  p, const std::string &  s,
             collator_base::level_type  level = collator_base::primary )
 {
     std::size_t  pos( 0 );
-    std::string  snorm( col.transform( level, s ) ); 
+    std::string  snorm( col.transform( level, s ) );
 
     std::size_t  ssize( snorm.size() - 1 );
     std::size_t  len( ssize );
